@@ -1,0 +1,22 @@
+# Maven/Gradle files
+target/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+
+# Application Properties
+application.properties
+application.yml
