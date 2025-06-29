@@ -1,56 +1,47 @@
 package com.shastry.jobApp.service;
 
-import com.shastry.jobApp.exceptions.jobNotFoundException;
 import com.shastry.jobApp.model.Job;
 import com.shastry.jobApp.repo.JobRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class JobService {
 
-    @Autowired
-    private JobRepo repo;
+    private final JobRepo jobRepo;
 
-    // Retrieve all jobs from the database
+    public Job save(Job job)
+    {
+        System.out.println("this is posting job service");
+        return jobRepo.save(job);
+    }
+
     public List<Job> getAllJobs() {
-        List<Job> jobs=repo.findAll();
-        System.out.println(jobs);
-        return jobs;
+        return jobRepo.findAll();
     }
 
-    public Job createJob(Job job) {
-        return repo.save(job);
+    public List<Job> getJobsByRecruiter(Long recruiterId) {
+        return jobRepo.findByRecruiterId(recruiterId);
     }
 
-    public Job getJob(int jobId) {
-        Optional<Job> job = repo.findById(jobId);
-        return job.orElseThrow(() -> new jobNotFoundException("Job not found with id: " + jobId));
+    public Optional<Object> getJobById(Long aLong) {
+        return Optional.empty();
     }
 
-    public Job updateJob(Job job, int jobId) {
-        Job newJob = repo.findById(jobId).orElseThrow(()->new jobNotFoundException("job not exist with id: " + jobId));
-
-        newJob.setJobDescription(job.getJobDescription());
-        newJob.setJobTitle(job.getJobTitle());
-        newJob.setExperience(job.getExperience());
-        newJob.setSalary(job.getSalary());
-        newJob.setLocation(job.getLocation());
-        newJob.setCompanyDescription(job.getCompanyDescription());
-        newJob.setCompanyName(job.getCompanyName());
-
-        Job updatedJob = repo.save(newJob);
-        return updatedJob;
-
+    public Optional<Job> findById(Long jobId) {
+        return jobRepo.findById(jobId);
     }
 
-    public void deleteJob(int jobId) {
-
-        Job job = repo.findById(jobId).orElseThrow(()->new jobNotFoundException("no job found with id: "+jobId));
-        repo.deleteById(jobId);
-
+    public Page<Job> searchJobs(String title, String location, String companyName, Double minSalary, Integer minExperience, Pageable pageable) {
+        return jobRepo.searchJobs(title, location, companyName, minSalary, minExperience , pageable);
     }
+
 }
